@@ -1,34 +1,35 @@
-# JSON & XML 格式化工具
+# FormatTools - JSON & XML 格式化工具
 
-![JSON & XML 格式化工具](https://img.shields.io/badge/JSON%20%26%20XML-格式化工具-green)
+![FormatTools](https://img.shields.io/badge/FormatTools-JSON%20%26%20XML%20Formatter-green)
 ![React](https://img.shields.io/badge/React-19.1.1-blue)
 ![Vite](https://img.shields.io/badge/Vite-7.1.4-yellow)
 ![License](https://img.shields.io/badge/License-MIT-green)
+![GitHub Stars](https://img.shields.io/github/stars/BinbinGuan/FormatTools?style=social)
 
-一个功能强大、界面美观的JSON和XML格式化工具，帮助开发者快速格式化、验证和美化JSON与XML数据。
+一个功能强大、界面美观的JSON和XML格式化工具，帮助开发者快速格式化、验证和美化JSON与XML数据，提升开发效率。
 
 ## ✨ 功能特点
 
-- **双格式支持**：同时支持JSON和XML格式的格式化与验证
-- **实时语法高亮**：使用Prism.js提供高质量的代码高亮显示
-- **错误处理**：提供清晰的语法错误提示
+- **双格式支持**：同时支持JSON和XML格式的格式化、验证与美化
+- **实时语法高亮**：使用专业的代码高亮显示，提升代码可读性
+- **智能错误处理**：提供清晰的语法错误提示和定位
 - **一键复制**：快速复制格式化后的代码到剪贴板
-- **响应式设计**：适配桌面和移动设备的各种屏幕尺寸
+- **响应式设计**：完美适配桌面和移动设备的各种屏幕尺寸
 - **现代化UI**：采用渐变背景、卡片式布局和流畅的交互体验
-- **快速操作**：提供清空输入、格式化等便捷功能
+- **快速操作**：提供清空输入、格式化等便捷功能按钮
 
 ## 🚀 快速开始
 
 ### 在线预览
 
-项目已部署并可在线访问：[JSON & XML 格式化工具](http://localhost:4173/)（本地开发预览）
+项目已开源并可在GitHub上获取：[FormatTools](https://github.com/BinbinGuan/FormatTools)
 
 ### 本地开发
 
 ```bash
 # 克隆项目
-https://github.com/your-username/json-xml-formatter.git
-cd json-xml-formatter
+git clone git@github.com:BinbinGuan/FormatTools.git
+cd FormatTools
 
 # 安装依赖
 npm install
@@ -54,8 +55,8 @@ npm run preview
 
 1. **克隆项目仓库**
    ```bash
-   git clone https://github.com/your-username/json-xml-formatter.git
-   cd json-xml-formatter
+   git clone git@github.com:BinbinGuan/FormatTools.git
+   cd FormatTools
    ```
 
 2. **安装依赖**
@@ -240,7 +241,7 @@ npm run lint
 
 我们欢迎并感谢社区贡献！如果你想为这个项目做出贡献，请按照以下步骤操作：
 
-1. Fork项目仓库
+1. Fork项目仓库 [FormatTools](https://github.com/BinbinGuan/FormatTools)
 2. 创建你的功能分支（`git checkout -b feature/AmazingFeature`）
 3. 提交你的更改（`git commit -m 'Add some AmazingFeature'`）
 4. 推送到分支（`git push origin feature/AmazingFeature`）
@@ -254,9 +255,9 @@ npm run lint
 
 如果你有任何问题、建议或反馈，欢迎联系我们：
 
-- 项目维护者：[your-username](https://github.com/your-username)
-- GitHub Issues：[https://github.com/your-username/json-xml-formatter/issues](https://github.com/your-username/json-xml-formatter/issues)
+- 项目维护者：[BinbinGuan](https://github.com/BinbinGuan)
+- GitHub Issues：[https://github.com/BinbinGuan/FormatTools/issues](https://github.com/BinbinGuan/FormatTools/issues)
 
 ---
 
-感谢使用JSON & XML 格式化工具！如果这个项目对你有帮助，请给我们一个⭐️支持！
+感谢使用FormatTools - JSON & XML 格式化工具！如果这个项目对你有帮助，请给我们一个⭐️支持！
