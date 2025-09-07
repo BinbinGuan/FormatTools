@@ -115,104 +115,300 @@ npm run preview
    - **Vite**：现代前端构建工具
    - **react-syntax-highlighter**：提供语法高亮功能
 
-## 🚢 部署指南
+## 🚢 Linux服务器部署指南
 
-### 开发环境部署
+FormatTools项目作为一个纯静态网站，可以在Linux服务器上通过多种方式进行部署。以下是详细的部署步骤：
+
+### 前提条件
+
+在开始部署之前，请确保您的Linux服务器满足以下要求：
+
+- 操作系统：Ubuntu 20.04+/CentOS 7+/Debian 10+
+- 具有sudo/root权限
+- 已安装Git
+- 已安装Node.js v20.19.0或更高版本
+- 已安装npm v10.0或更高版本
+
+### 方法1：使用Nginx部署（推荐）
+
+Nginx是一个高性能的Web服务器，非常适合部署静态网站。
+
+#### 步骤1：安装Nginx
 
 ```bash
-# 安装依赖
-npm install
+# Ubuntu/Debian系统
+sudo apt update
+sudo apt install nginx -y
 
-# 启动开发服务器
-npm run dev
-# 服务器将运行在 http://localhost:5173/
+# CentOS/RHEL系统
+sudo yum install epel-release -y
+sudo yum install nginx -y
+
+# 启动并设置开机自启Nginx
+sudo systemctl start nginx
+sudo systemctl enable nginx
 ```
 
-### 生产环境部署
-
-#### 方法1：使用静态文件服务器
+#### 步骤2：克隆项目并构建
 
 ```bash
-# 全局安装 serve
-npm install -g serve
+# 克隆项目到服务器
+git clone git@github.com:BinbinGuan/FormatTools.git
+cd FormatTools
+
+# 安装依赖
+npm install
 
 # 构建项目
 npm run build
 
-# 提供静态文件服务
-serve -s dist -l 3000
-# 服务器将运行在 http://localhost:3000/
+# 查看构建结果ls -la dist/
 ```
 
-#### 方法2：使用Nginx部署
+#### 步骤3：配置Nginx
 
-1. **构建项目**
-   ```bash
-   npm run build
-   ```
+```bash
+# 创建Nginx配置文件
+sudo nano /etc/nginx/conf.d/formattools.conf
+```
 
-2. **创建Nginx配置文件**
-   ```nginx
-   server {
-       listen 80;
-       server_name your-domain.com;
-       
-       location / {
-           root /path/to/json-xml-formatter/dist;
-           index index.html;
-           try_files $uri $uri/ /index.html;  # 支持SPA路由
-       }
-   }
-   ```
+将以下内容粘贴到配置文件中（根据您的实际情况修改）：
 
-3. **重启Nginx**
-   ```bash
-   sudo systemctl restart nginx
-   ```
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com www.your-domain.com;  # 替换为您的域名或服务器IP
+    
+    location / {
+        root /path/to/FormatTools/dist;  # 替换为实际的项目路径
+        index index.html;
+        try_files $uri $uri/ /index.html;  # 支持SPA路由
+    }
+    
+    # 可选：添加gzip压缩优化性能
+    gzip on;
+    gzip_types text/plain text/css application/javascript application/json image/svg+xml;
+    gzip_min_length 1024;
+    
+    # 可选：添加安全头部
+    add_header X-Frame-Options SAMEORIGIN;
+    add_header X-Content-Type-Options nosniff;
+    add_header X-XSS-Protection "1; mode=block";
+}
+```
 
-#### 方法3：使用PM2管理进程
+保存并关闭文件（Ctrl+O, Ctrl+X）。
+
+#### 步骤4：验证并重启Nginx
+
+```bash
+# 验证Nginx配置是否正确
+sudo nginx -t
+
+# 如果配置正确，重启Nginx
+sudo systemctl restart nginx
+
+# 查看Nginx状态
+sudo systemctl status nginx
+```
+
+#### 步骤5：配置防火墙
+
+```bash
+# Ubuntu/Debian系统（使用ufw）
+sudo ufw allow 'Nginx HTTP'
+sudo ufw reload
+
+# CentOS/RHEL系统（使用firewalld）
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --reload
+```
+
+现在您应该可以通过浏览器访问您的域名或服务器IP来查看FormatTools应用了。
+
+### 方法2：使用PM2和serve部署
+
+如果您偏好使用Node.js生态系统工具进行部署，可以使用PM2管理serve进程。
+
+#### 步骤1：安装PM2
 
 ```bash
 # 全局安装PM2
 npm install -g pm2
+```
+
+#### 步骤2：克隆项目并构建
+
+```bash
+# 克隆项目到服务器
+git clone git@github.com:BinbinGuan/FormatTools.git
+cd FormatTools
+
+# 安装依赖
+npm install
 
 # 安装serve
 npm install serve --save
 
-# 使用PM2运行应用
+# 构建项目
 npm run build
-npm install serve
-npx pm2 start npx --name "json-xml-formatter" -- serve -s dist -l 3000
+```
 
-# 设置开机自启
+#### 步骤3：使用PM2运行应用
+
+```bash
+# 使用PM2启动serve服务
+npm install serve
+npx pm2 start npx --name "formattools" -- serve -s dist -l 3000
+
+# 查看PM2运行状态
+pm2 status
+```
+
+#### 步骤4：设置开机自启
+
+```bash
+# 生成PM2开机自启脚本
 npx pm2 startup
+
+# 按照提示执行生成的命令，类似：
 sudo env PATH=$PATH:/home/your-user/.nvm/versions/node/v20.19.5/bin /home/your-user/.nvm/versions/node/v20.19.5/lib/node_modules/pm2/bin/pm2 startup systemd -u your-user --hp /home/your-user
 
 # 保存当前进程列表
 npx pm2 save
 ```
 
-## 🐳 Docker部署
+#### 步骤5：配置防火墙
 
-虽然本项目是纯静态网站，但也可以使用Docker进行容器化部署：
+```bash
+# 允许3000端口访问
+# Ubuntu/Debian系统
+sudo ufw allow 3000/tcp
+sudo ufw reload
+
+# CentOS/RHEL系统
+sudo firewall-cmd --permanent --add-port=3000/tcp
+sudo firewall-cmd --reload
+```
+
+现在您可以通过 http://your-server-ip:3000 访问FormatTools应用了。
+
+### 方法3：使用Docker容器化部署
+
+如果您使用Docker，可以通过容器化方式快速部署FormatTools。
+
+#### 步骤1：安装Docker
+
+```bash
+# Ubuntu/Debian系统
+sudo apt update
+sudo apt install docker.io -y
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+
+# CentOS/RHEL系统
+sudo yum install docker -y
+sudo systemctl start docker
+sudo systemctl enable docker
+sudo usermod -aG docker $USER
+
+# 安装完成后需要重新登录使用户组更改生效
+```
+
+#### 步骤2：克隆项目并创建Dockerfile
+
+```bash
+# 克隆项目到服务器
+git clone git@github.com:BinbinGuan/FormatTools.git
+cd FormatTools
+
+# 创建Dockerfile
+nano Dockerfile
+```
+
+将以下内容粘贴到Dockerfile中：
 
 ```dockerfile
-# Dockerfile
+# 使用Node.js镜像进行构建
+FROM node:20-alpine AS builder
+WORKDIR /app
+
+# 复制package文件并安装依赖
+COPY package*.json ./
+RUN npm install
+
+# 复制源代码并构建
+COPY . .
+RUN npm run build
+
+# 使用Nginx镜像运行
 FROM nginx:alpine
-COPY ./dist /usr/share/nginx/html
+
+# 复制构建结果到Nginx目录
+COPY --from=builder /app/dist /usr/share/nginx/html
+
+# 复制自定义Nginx配置（可选）
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# 暴露端口
 EXPOSE 80
+
+# 启动Nginx
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-构建和运行Docker容器：
+保存并关闭文件。
+
+#### 步骤3：构建并运行Docker容器
 
 ```bash
 # 构建Docker镜像
-docker build -t json-xml-formatter .
+docker build -t formattools .
 
 # 运行Docker容器
-docker run -p 8080:80 json-xml-formatter
-# 应用将运行在 http://localhost:8080/
+docker run -d -p 80:80 --name formattools-app formattools
+
+# 查看容器运行状态
+docker ps
+```
+
+#### 步骤4：配置防火墙
+
+```bash
+# 允许80端口访问
+# Ubuntu/Debian系统
+sudo ufw allow 80/tcp
+sudo ufw reload
+
+# CentOS/RHEL系统
+sudo firewall-cmd --permanent --add-port=80/tcp
+sudo firewall-cmd --reload
+```
+
+现在您可以通过 http://your-server-ip 访问FormatTools应用了。
+
+### 部署后的维护
+
+```bash
+# 更新项目
+cd FormatTools
+git pull
+npm install
+npm run build
+
+# 根据部署方式重启服务
+# Nginx
+sudo systemctl restart nginx
+
+# PM2
+npx pm2 restart formattools
+
+# Docker
+docker stop formattools-app
+docker rm formattools-app
+docker build -t formattools .
+docker run -d -p 80:80 --name formattools-app formattools
 ```
 
 ## 🛠️ 开发指南
